@@ -1,12 +1,8 @@
-﻿using System;
-
-namespace Chippo.Actions
+﻿namespace Chippo.Actions
 {
-    interface IEvent<TId, TStream> : IEquatable<IEvent<TId, TStream>>
-        where TId : IEquatable<TId>
-        where TStream : IEquatable<TStream>
+    interface IEvent
     {
-        TId Id { get; }
-        TStream Stream { get; }
+        EventId EventId { get; }
+        EventStream Stream { get; }
     }
 }

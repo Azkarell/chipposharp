@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Chippo.Actions.Implementation
 {
-    class KeyboardEventFactory : IKeyboardEventFactory<Guid, string>
+    class KeyboardEventFactory : IKeyboardEventFactory
     {
         private readonly InputSettings inputSettings;
         private readonly ILifetimeScope lifetimeScope;
@@ -19,14 +19,14 @@ namespace Chippo.Actions.Implementation
             this.lifetimeScope = lifetimeScope;
         }
 
-        public IEvent<Guid, string>? Create(KeyEventArgs s) 
+        public IEvent? Create(KeyEventArgs s) 
         {
             var cs = s.Code.ToString("g");
             if (inputSettings.TryGetValue(cs, out var ev))
             {
                 var type = Type.GetType(ev);
                 if (type == null) return null;
-                return Activator.CreateInstance(type) as IEvent<Guid, string>;
+                return Activator.CreateInstance(type) as IEvent;
             }
             return null;
         }

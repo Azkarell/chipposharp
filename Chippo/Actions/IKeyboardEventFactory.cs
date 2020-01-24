@@ -4,11 +4,10 @@ using System;
 
 namespace Chippo.Actions
 {
-    interface IKeyboardEventFactory<TId, TStream>: 
-        IFactory<KeyEventArgs,IEvent<TId,TStream>?>
-        where TId : IEquatable<TId>
-        where TStream : IEquatable<TStream>
+    interface IKeyboardEventFactory: 
+        IFactory<KeyEventArgs,IEvent>
+
     {
-        IEvent<TId, TStream>? Create(KeyEventArgs s);
+        IEvent? Create(KeyEventArgs s);
     }
 }

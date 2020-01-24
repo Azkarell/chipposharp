@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace Chippo.Actions
 {
-
-    interface IMediator
+    interface IEventQueue
     {
-        Task Publish(IEvent @event);
-        void Subscribe(IEventHandler eventHandler);
+        void Enqueue(IEvent @event);
+        Task<IEvent> DequeueAsync();
     }
 }

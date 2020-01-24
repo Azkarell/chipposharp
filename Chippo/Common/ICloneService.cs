@@ -2,6 +2,6 @@
 {
     public interface ICloneService
     {
-        public T Clone<T>(T val);
+        public T Clone<T>(T val) where T: class;
     }
 }

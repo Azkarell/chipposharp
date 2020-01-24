@@ -5,23 +5,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Chippo.Actions.System
 {
-    internal class QuitEvent : IEvent<Guid, string>
+    internal class QuitEvent : IEvent
     {
         public QuitEvent()
         {
       
         }
 
-        public static Guid GlobalId { get; } = Guid.NewGuid();
-        public string Stream => AppConstants.SystemEventStream;
-
-        public Guid Id => GlobalId;
-
-        public bool Equals([AllowNull] IEvent<Guid, string> other)
-        {
-            return other != null
-                && Id == other.Id
-                && Stream == other.Stream;
-        }
+        public EventId EventId { get; } = EventId.NewId();
+        public EventStream Stream { get; } = new EventStream();
     }
 }

@@ -7,9 +7,9 @@ namespace Chippo.Common
 {
     class CloneService : ICloneService
     {
-        public T Clone<T>(T val)
+        public T Clone<T>(T val) where T: class
         {
-            return (T)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(val), val.GetType());
+            return (T)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(val), val.GetType())!;
         }
     }
 }

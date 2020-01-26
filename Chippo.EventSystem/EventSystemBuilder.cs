@@ -4,24 +4,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Chippo.EventSystem.Abstraction;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chippo.EventSystem
 {
-    public class EventSystemBuilder: IEventSystemBuilder
+    class EventSystemBuilder: IEventSystemBuilder
     {
-        private readonly IServiceCollection _services;
-        private StreamCollection _streams = new StreamCollection();
+        private readonly IServiceCollection services;
+        private StreamCollection streams = new StreamCollection();
 
         public EventSystemBuilder(IServiceCollection services)
         {
-            _services = services;
+            this.services = services;
         }
         public IStreamRegistration AddStream(StreamId id)
         {
-            IStreamRegistration reg = new StreamRegistration(id);
-            _streams.Add(reg);
+            StreamRegistration reg = new StreamRegistration(id);
+            streams.Add(reg);
             return reg;
         }
 
@@ -29,132 +30,123 @@ namespace Chippo.EventSystem
         {
 
         }
+
+        private Dictionary<Type, List<HandlerWrapper>> GenerateHandler()
+        {
+            var ret = new Dictionary<Type, List<HandlerWrapper>>();
+            foreach (var stream in streams)
+            {
+                var handlers = stream.GetHandlerMap();
+                MergeMap(ret, handlers);
+            }
+        }
+
     }
 
-    internal class StreamCollection: ICollection<IStreamRegistration>
+    class EventSystem
     {
-        private List<IStreamRegistration> registrations = new List<IStreamRegistration>();
-        public StreamCollection()
-        {
+        private readonly Dictionary<Type, List<HandlerWrapper>> handler;
 
+        public EventSystem(Dictionary<Type, List<HandlerWrapper>> handler)
+        {
+            this.handler = handler;
         }
 
-        public IEnumerator<IStreamRegistration> GetEnumerator()
+        public async Task Execute(Event @event)
         {
-            return registrations.GetEnumerator();
+            var type = @event.Payload.GetType();
+            if (handler.TryGetValue(type, out var handlers))
+            {
+                foreach (var h in handlers)
+                {
+                    await h.HandleAsync(@event);
+                }
+            }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public IBus CreateBus()
         {
-            return ((IEnumerable) registrations).GetEnumerator();
-        }
-
-        public void Add(IStreamRegistration item)
-        {
-            registrations.Add(item);
-        }
-
-        public void Clear()
-        {
-            registrations.Clear();
-        }
-
-        public bool Contains(IStreamRegistration item)
-        {
-            return registrations.Contains(item);
-        }
-
-        public void CopyTo(IStreamRegistration[] array, int arrayIndex)
-        {
-            registrations.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(IStreamRegistration item)
-        {
-            return registrations.Remove(item);
-        }
-
-        public int Count => registrations.Count;
-
-        public bool IsReadOnly => ((ICollection<IStreamRegistration>) registrations).IsReadOnly;
-    }
-
-    public class StreamRegistration : IStreamRegistration
-    {
-        private StreamId _id;
-        private EventRegistrationCollection _eventsRegistration = new EventRegistrationCollection();
-        public StreamRegistration(StreamId id)
-        {
-            _id = id;
-        }
-
-        public IEventRegistration<T> AddEvent<T>()
-        {
-            EventRegistration<T> reg = new EventRegistration<T>();
-            _eventsRegistration.Add(reg);
-            return reg;
-        }
-
-        public IStreamRegistration WithName(string name)
-        {
-            throw new System.NotImplementedException();
+            var bus = new Bus();
         }
     }
 
-    public class EventRegistration<T>: IEventRegistration<T>
+    internal class Bus: IBus
     {
-        public IEventRegistration WithHandler(Type type)
+        private EventSystem system;
+        private List<Task>
+        public Bus(EventSystem system)
         {
-            throw new NotImplementedException();
+            this.system = system;
         }
 
-        public IEventRegistration WithId(EventId id)
+
+        public void Publish<T>(T @event)
         {
-            throw new NotImplementedException();
+            
         }
     }
 
 
-    internal class EventRegistrationCollection: ICollection<IEventRegistration>
+    abstract class HandlerWrapper
     {
-        private List<IEventRegistration> _types = new List<IEventRegistration>();
-        public IEnumerator<IEventRegistration> GetEnumerator()
+        public abstract Task HandleAsync(Event @event);
+
+    }
+
+    class HandlerWrapper<T> : HandlerWrapper
+    {
+        private readonly IEventHandler<T> handler;
+        public HandlerWrapper(IEventHandler<T> handler)
         {
-            return _types.GetEnumerator();
+            this.handler = handler;
+        }
+        public override async Task HandleAsync(Event @event)
+        {
+            await handler.HandleAsync((T) @event.Payload);
+        }
+    }
+    
+
+    internal class Event : IEquatable<Event>
+    {
+        private EventId eventId;
+        private StreamId streamId;
+        public object Payload { get; }
+        public Event(EventId eventId, StreamId streamId, object payload)
+        {
+            Payload = payload;
+            this.eventId = eventId;
+            this.streamId = streamId;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public bool Equals(Event? other)
         {
-            return ((IEnumerable) _types).GetEnumerator();
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return eventId.Equals(other.eventId) && streamId.Equals(other.streamId) && Payload.Equals(other.Payload);
         }
 
-        public void Add(IEventRegistration item)
+        public override bool Equals(object? obj)
         {
-            _types.Add(item);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Event) obj);
         }
 
-        public void Clear()
+        public override int GetHashCode()
         {
-            _types.Clear();
+            return HashCode.Combine(eventId, streamId, Payload);
         }
 
-        public bool Contains(IEventRegistration item)
+        public static bool operator ==(Event? left, Event? right)
         {
-            return _types.Contains(item);
+            return Equals(left, right);
         }
 
-        public void CopyTo(IEventRegistration[] array, int arrayIndex)
+        public static bool operator !=(Event? left, Event? right)
         {
-            _types.CopyTo(array, arrayIndex);
+            return !Equals(left, right);
         }
-
-        public bool Remove(IEventRegistration item)
-        {
-            return _types.Remove(item);
-        }
-
-        public int Count => _types.Count;
-
-        public bool IsReadOnly => ((ICollection<IEventRegistration>) _types).IsReadOnly;
     }
 }

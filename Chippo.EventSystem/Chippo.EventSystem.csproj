@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chippo.Abstraction\Chippo.EventSystem.Abstraction.csproj" />
+    <ProjectReference Include="..\Chippo.EventSystem.Abstraction\Chippo.EventSystem.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>

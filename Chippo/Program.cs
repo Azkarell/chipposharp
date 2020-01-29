@@ -5,6 +5,7 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Threading.Tasks;
+using Chippo.Graphics;
 
 namespace Chippo
 {
@@ -12,16 +13,14 @@ namespace Chippo
     {
         static void Main(string[] args)
         {
-            Nito.AsyncEx.AsyncContext.Run(
-                async () =>
-                {
-                    var builder = new AppBuilder();
-                    var app = builder.Build();
-                    await app.Start();
-                });
-          
+            var builder = new AppBuilder();
+            builder
+                .WithStartUp<Startup>()
+                .WithComponent<Graphics2D>()
+            var app = builder.Build();
+            app.Start();
         }
 
-  
+
     }
 }

@@ -1,81 +1,38 @@
-﻿using Autofac;
-using Chippo.Actions;
-using Chippo.Actions.Implementation;
-using Chippo.Actions.System;
-using Chippo.Common;
-using Chippo.Constants;
-using Chippo.Graphics;
-using Chippo.Input;
-using Chippo.Settings;
-using SFML.Graphics;
-using SFML.System;
-using SFML.Window;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using Chippo.Interfaces;
 
 namespace Chippo
 {
-    class App: IEventHandler<IEvent<Guid,string>,Guid,string>
+    public class App
     {
-        private readonly IContainer container;
-        private readonly IMediator<Guid, string> mediator;
-        private string rootScope = "rootScope";
-        private RenderWindow window;
+        private readonly IOutput output;
+        private readonly IDispatcher dispatcher;
+        private readonly ILogic logic;
 
-        public App(IContainer container, AppSettings settings, IMediator<Guid,string> mediator)
+
+        public App(IOutput output,IDispatcher dispatcher, ILogic logic)
         {
-            this.container = container;
-            Settings = settings;
-            this.mediator = mediator;
+            this.output = output;
+            this.dispatcher = dispatcher;
+            this.logic = logic;
         }
 
-        public AppSettings Settings { get; }
-
-        public string Stream => AppConstants.SystemEventStream;
-
-        public Guid Id => QuitEvent.GlobalId;
-
-        public void Configure(ContainerBuilder containerBuilder)
-        {
-            containerBuilder.RegisterType<InputMapper>().As<IInputMapper>().SingleInstance();
-            containerBuilder.RegisterType<KeyboardEventFactory>().As<IKeyboardEventFactory<Guid, string>>().SingleInstance();
-        }
-
-        public Task Handle(IEvent<Guid,string> @event)
-        {
-            if(@event.Id == Id && @event.Stream == @event.Stream)
-            {
-                window.Close();
-            }
-            return Task.CompletedTask;
-        }
+        public ApplicationState State { get; private set; } = ApplicationState.Init;
 
         public async Task Start()
         {
-            using (var scope = container.BeginLifetimeScope(rootScope, Configure))
+            State = ApplicationState.Running;
+            Nito.AsyncEx.AsyncContext.Run(async () =>
             {
-                var wb = scope.Resolve<WindowBuilder>();
-                window = wb.Build();
-
-                mediator.Subscribe(this);
-                var shape = new RectangleShape(new Vector2f(100, 100))
+                while (State == ApplicationState.Running)
                 {
-                    FillColor = Color.Black
-                };
-
-                while (window.IsOpen)
-                {
-                    window.DispatchEvents();
-                    window.Clear(Color.Cyan);
-                    window.Draw(shape);
-                    window.Display();
-                    await Task.Delay(15);
+                    dispatcher.DispatchPendingEvents();
+                    State = await logic.Update();
+                    await output.Update();
                 }
-            }
+                output.Close();
+            });
         }
-
-
     }
 }

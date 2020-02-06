@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using Chippo.Input;
 using Chippo.Interfaces;
 using SFML.Window;
 
@@ -7,30 +8,30 @@ namespace Chippo.GameObjects
 {
     internal class GameLogic: ILogic
     {
-        private GameObjectsCollection gameObjects;
-        private readonly Stopwatch stopwatch;
-        private readonly Input input;
+        private readonly ILoop loop;
+        private readonly GameState state;
+        private readonly IInput input;
 
-        public GameLogic(GameObjectsCollection gameObjects, Stopwatch stopwatch, Input input)
+        public GameLogic(ILoop loop, GameState state, IInput input)
         {
-            this.gameObjects = gameObjects;
-            this.stopwatch = stopwatch;
+            this.loop = loop;
+            this.state = state;
             this.input = input;
         }
 
 
 
-        public Task<ApplicationState> Update()
+        public Task Update()
         {
             if (input.IsPressed(Keyboard.Key.Q))
             {
-                return Task.FromResult(ApplicationState.Shutdown);
+                loop.Stop();
             }
-            foreach (var gameObject in gameObjects)
+            foreach (var gameObject in state.GameObjects)
             {
-                gameObject.Update(stopwatch.Elapsed);
+                gameObject.Update(loop.Elapsed);
             }
-            return Task.FromResult(ApplicationState.Running);
+            return Task.CompletedTask;
         }
     }
 }

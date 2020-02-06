@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Chippo.Input;
 using Chippo.Interfaces;
 using SFML.Graphics;
 using SFML.System;
@@ -18,11 +19,11 @@ namespace Chippo
             this.renderWindow = renderWindow;
             renderWindow.Closed += (s, a) => renderWindow.Close();
             this.drawables = drawables;
-            Input = new Input(renderWindow);
+            Input = new Input.Input(renderWindow);
             
         }
 
-        public Input Input { get; }
+        public IInput Input { get; }
 
         public bool IsOpen => renderWindow.IsOpen;
 
@@ -42,6 +43,7 @@ namespace Chippo
         public void Close()
         {
             renderWindow.Close();
+            Dispose();
         }
 
         public void Dispose()

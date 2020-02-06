@@ -1,4 +1,4 @@
-﻿namespace Chippo.Interfaces
+﻿namespace Chippo.Input.Axis
 {
     public interface IAxis2D
     {

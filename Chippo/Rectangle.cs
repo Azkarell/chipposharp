@@ -1,29 +1,34 @@
 ﻿using System;
 using Chippo.GameObjects;
-using Chippo.Interfaces;
 using SFML.Graphics;
 using SFML.System;
 
 namespace Chippo
 {
-    public class Rectangle : DrawableGameObject
+    public class Rectangle : GameObject, Drawable
     {
-        private readonly float speed;
-        private readonly IAxis2D axis;
-        private SFML.Graphics.RectangleShape rectangle = new RectangleShape(new Vector2f(10,10));
+        private readonly IMovement movement;
 
-        public Rectangle(float speed, IAxis2D axis)
+        private RectangleShape rectangle;
+
+        public Rectangle(Vector2f initPosition, Vector2f size, Color color, IMovement movement)
         {
-            this.speed = speed;
-            this.axis = axis;
-            rectangle.FillColor = Color.Red;
+            this.movement = movement;
+            rectangle = new RectangleShape(size);
+            rectangle.FillColor = color;
+            rectangle.Position = initPosition;
         }
 
-        public override void Update(TimeSpan delta)
+        protected override void OnUpdate(TimeSpan delta)
         {
-            rectangle.Position = new Vector2f(rectangle.Position.X + speed * axis.XAxis * (float) delta.TotalSeconds, rectangle.Position.Y + speed * axis.YAxis * (float) delta.TotalSeconds);
+             rectangle.Position = movement.Apply(rectangle.Position, delta);
         }
 
-        public override Drawable AsDrawable => rectangle;
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            rectangle.Draw(target, states);
+        }
+
+
     }
 }

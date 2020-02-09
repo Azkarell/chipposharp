@@ -1,12 +1,12 @@
 ﻿using System;
-using Chippo.Input;
-using Chippo.Input.Axis;
-using Chippo.Interfaces;
+using Chippo.Core.Input;
+using Chippo.Core.Input.Axis;
+using Chippo.Core.Interfaces;
 using static SFML.Window.Keyboard;
 
 namespace Chippo.GameObjects
 {
-    internal class AxisSwitcher: StaticObject
+    public class AxisSwitcher: StaticObject
     {
 
         private readonly Axis2DProxy axisProxy;
@@ -17,7 +17,7 @@ namespace Chippo.GameObjects
         {
             this.axisProxy = axisProxy;
             this.axis2Ds = axis2Ds;
-            input.RegisterOnPressed(Key.R,  OnPress);
+            input.RegisterOnPressed(KeyboardKey.R,  OnPress);
         }
 
         private void OnPress()

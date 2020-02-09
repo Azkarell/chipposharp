@@ -1,4 +1,6 @@
-﻿using SFML.Graphics;
+﻿using Chippo.Core;
+using Chippo.Core.Interfaces;
+using SFML.Graphics;
 
 namespace Chippo
 {

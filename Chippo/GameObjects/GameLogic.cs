@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Chippo.Input;
-using Chippo.Interfaces;
-using SFML.Window;
+using Chippo.Core;
+using Chippo.Core.Input;
+using Chippo.Core.Interfaces;
 
 namespace Chippo.GameObjects
 {
@@ -23,7 +23,7 @@ namespace Chippo.GameObjects
 
         public Task Update()
         {
-            if (input.IsPressed(Keyboard.Key.Q))
+            if (input.IsPressed(KeyboardKey.Q))
             {
                 loop.Stop();
             }

@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
-using SFML.Graphics;
-using SFML.Window;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Chippo.GameObjects;
-using Chippo.Interfaces;
+using Chippo.Core;
 
 namespace Chippo
 {
@@ -15,9 +11,15 @@ namespace Chippo
     {
         static async Task Main(string[] args)
         {
-            var builder = new AppBuilder();
-            var app = builder.Build();
+            var app = CreateApplication();
             await app.Start();
+        }
+
+        static Application CreateApplication()
+        {
+            return Application.CreateDefaultApplicationBuilder()
+                .UseStartup<Startup>()
+                .Build();
         }
     }
 }

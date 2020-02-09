@@ -1,49 +1,50 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Chippo.Interfaces;
+using Chippo.Core;
+using Chippo.Core.Interfaces;
 
 namespace Chippo
 {
     public class SimpleLoop : ILoop
     {
-        private readonly Stopwatch stopwatch;
-        private readonly TimeSpan targetRate;
+        private readonly IClock clock;
+        private readonly LoopOptions options = LoopOptions.Default;
         private TimeSpan last = TimeSpan.Zero;
 
-        public SimpleLoop(Stopwatch stopwatch, TimeSpan targetRate)
+        public SimpleLoop(IClock clock, LoopOptions? options = null)
         {
-            this.stopwatch = stopwatch;
-            this.targetRate = targetRate;
+            this.clock = clock;
+            this.options = options ?? this.options;
         }
         public void Start()
         {
-            stopwatch.Start();
+            clock.Start();
 
         }
 
-        public TimeSpan Elapsed => stopwatch.Elapsed;
-        public event EventHandler<LoopTickedEventArgs> Ticked;
+        public TimeSpan Elapsed => clock.Elapsed;
+        public event EventHandler<LoopTickedEventArgs>? Ticked;
 
         public async Task<ApplicationState> Next()
         {
-            if (!stopwatch.IsRunning)
+            if (!clock.IsRunning)
             {
                 return ApplicationState.Shutdown;
             }
-            var wait = targetRate - (stopwatch.Elapsed - last);
+            var wait = options.TargetRate - (clock.Elapsed - last);
             if (wait > TimeSpan.Zero)
             {
                 await Task.Delay(wait);
             }
-            last = stopwatch.Elapsed;
-            Ticked?.Invoke(this,e: new LoopTickedEventArgs(last));
+            last = clock.Elapsed;
+            Ticked?.Invoke(this, e: new LoopTickedEventArgs(last));
             return ApplicationState.Running;
         }
 
         public void Stop()
         {
-            stopwatch.Stop();
+            clock.Stop();
         }
     }
 }

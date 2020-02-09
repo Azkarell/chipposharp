@@ -2,12 +2,6 @@
 
 namespace Chippo.GameObjects
 {
-
-    public abstract class StaticObject
-    {
-        
-    }
-
     public abstract class GameObject
     {
         private TimeSpan last = TimeSpan.Zero;
@@ -18,5 +12,7 @@ namespace Chippo.GameObjects
             last = totalElapsed;
         }
         protected abstract void OnUpdate(TimeSpan delta);
+
+
     }
 }

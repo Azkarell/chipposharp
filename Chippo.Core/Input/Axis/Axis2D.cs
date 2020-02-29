@@ -1,4 +1,6 @@
-﻿namespace Chippo.Core.Input.Axis
+﻿using Chippo.Core.Input.Axis.Interface;
+
+namespace Chippo.Core.Input.Axis
 {
     internal class Axis2D : IAxis2D
     {

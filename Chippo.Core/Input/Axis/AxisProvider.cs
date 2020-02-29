@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Chippo.Core.Input.Axis.Interface;
 
 namespace Chippo.Core.Input.Axis
 {
-    class AxisProvider: IAxisProvider
+    class AxisProvider : IAxisProvider
     {
         private readonly IAxisFactory factory;
-        private readonly Dictionary<string,IAxis2D> axis2Ds = new Dictionary<string, IAxis2D>();
+        private readonly Dictionary<string, IAxis2D> axis2Ds = new Dictionary<string, IAxis2D>();
 
         public AxisProvider(IAxisFactory factory)
         {
@@ -16,7 +17,7 @@ namespace Chippo.Core.Input.Axis
 
         public void Register(string name, Axis2DConfiguration configuration)
         {
-            Register(name,factory.CreateAxis2D(configuration));
+            Register(name, factory.CreateAxis2D(configuration));
         }
 
         public void Register(string name, IAxis2D axis2D)

@@ -1,11 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Chippo.Core.Interfaces
 {
-    public interface IOutput
+
+
+    public interface IOutput<in TContext>
     {
         bool IsOpen { get; }
-        Task Update();
+        Task Update(TContext context);
         void Close();
     }
 }

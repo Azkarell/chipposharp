@@ -1,4 +1,6 @@
-﻿namespace Chippo.Core.Input.Axis
+﻿using Chippo.Core.Input.Axis.Interface;
+
+namespace Chippo.Core.Input.Axis
 {
     class AxisFactory : IAxisFactory
     {
@@ -6,5 +8,7 @@
         {
             return new Axis2D(configuration);
         }
+
+
     }
 }

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chippo.Core\Chippo.Core.csproj" />
+    <ProjectReference Include="..\Chippo.Math\Chippo.Math.csproj" />
+    <ProjectReference Include="..\Chippo.System\Chippo.System.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,11 +2,9 @@
 using Chippo.Core;
 using Chippo.Core.Input;
 using Chippo.Core.Interfaces;
-using Chippo.GameObjects;
-using Chippo.SFML;
-using Chippo.SFML.Extensions;
-using SFML.Graphics;
-using SFML.Window;
+using Chippo.GameObjects.Extensions;
+using Chippo.Graphics.SFML.Extensions;
+
 
 namespace Chippo
 {
@@ -14,16 +12,15 @@ namespace Chippo
     {
         public void Configure(ContainerBuilder builder)
         {
-            builder.RegisterType<Clock>().As<IClock>().SingleInstance();
-            builder.RegisterType<GameState>().SingleInstance();
-            builder.AddSfml();
+            builder.AddSfml()
+                .AddGameLogic();
         }
 
         public void ConfigureApp(AppRegistration appRegistration)
         {
             appRegistration
                 .UseSfml()
-                .UseLogic<GameLogic>()
+                .UseGameLogic()
                 .UseLoop<SimpleLoop>();
 
         }

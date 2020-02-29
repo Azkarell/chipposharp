@@ -6,7 +6,7 @@ namespace Chippo.Core.Input.Mouses
     {
         public VerticalWheelDirection(IInput input, ILoop loop): base(loop)
         {
-            input.RegisterWheelVertical(UpdateValue);
+            input.SubscribeWheelVertical(UpdateValue);
         }
     }
 }

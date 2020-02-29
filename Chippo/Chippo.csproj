@@ -16,7 +16,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chippo.Core\Chippo.Core.csproj" />
-    <ProjectReference Include="..\Chippo.SFML\Chippo.SFML.csproj" />
+    <ProjectReference Include="..\Chippo.GameObject\Chippo.GameObjects.csproj" />
+    <ProjectReference Include="..\Chippo.Game\Chippo.Movement.csproj" />
+    <ProjectReference Include="..\Chippo.Graphics.SFML\Chippo.Graphics.SFML.csproj" />
   </ItemGroup>
 
 </Project>

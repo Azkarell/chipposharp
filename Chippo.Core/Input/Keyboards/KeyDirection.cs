@@ -1,4 +1,5 @@
 ﻿using Chippo.Core.Input.Axis;
+using Chippo.Core.Input.Axis.Interface;
 
 namespace Chippo.Core.Input.Keyboards
 {

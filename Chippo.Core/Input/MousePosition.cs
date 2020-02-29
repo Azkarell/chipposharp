@@ -4,8 +4,14 @@ namespace Chippo.Core.Input
 {
     public struct MousePosition : IEquatable<MousePosition>
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int X { get; }
+        public int Y { get; }
+
+        public MousePosition(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
 
         public bool Equals(MousePosition other)
         {
@@ -34,5 +40,6 @@ namespace Chippo.Core.Input
         {
             return !left.Equals(right);
         }
+
     }
 }

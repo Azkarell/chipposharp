@@ -1,5 +1,6 @@
 ﻿using System;
 using Chippo.Core.Input.Axis;
+using Chippo.Core.Input.Axis.Interface;
 using Chippo.Core.Interfaces;
 
 namespace Chippo.Core.Input.Mouses

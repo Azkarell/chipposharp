@@ -1,4 +1,5 @@
 ﻿using System;
+using Chippo.Core.Interfaces;
 
 namespace Chippo.Core.Input
 {
@@ -6,12 +7,14 @@ namespace Chippo.Core.Input
     {
         bool IsPressed(KeyboardKey key);
         bool IsPressed(MouseButton button);
+
         MousePosition MousePosition { get; }
-        void RegisterWheelHorizontal(Action<float> callback);
-        void RegisterWheelVertical(Action<float> callback);
-        void RegisterOnRelease(KeyboardKey key, Action callback);
-        void RegisterOnPressed(KeyboardKey key, Action callback);
-        void RegisterOnRelease(MouseButton button, Action callback);
-        void RegisterOnPressed(MouseButton button, Action callback);
+
+        ISubscription SubscribeWheelHorizontal(Action<float> callback);
+        ISubscription SubscribeWheelVertical(Action<float> callback);
+        ISubscription SubscribeOnRelease(KeyboardKey key, Action callback);
+        ISubscription SubscribeOnPressed(KeyboardKey key, Action callback);
+        ISubscription SubscribeOnRelease(MouseButton button, Action callback);
+        ISubscription SubscribeOnPressed(MouseButton button, Action callback);
     }
 }

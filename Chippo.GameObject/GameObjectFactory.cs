@@ -6,34 +6,36 @@ namespace Chippo.GameObjects
 {
     public class GameObjectFactory : IGameObjectFactory
     {
-        private readonly GameState state;
-        private Dictionary<string, Func<GameState,GameObject>> factories = new Dictionary<string, Func<GameState, GameObject>>();
+        private readonly GameObjectProvider gameObjectProvider;
+        private Dictionary<string, Func<GameObject>> factories = new Dictionary<string, Func<GameObject>>();
         
-        public GameObjectFactory(GameState state)
+        public GameObjectFactory(GameObjectProvider gameObjectProvider )
         {
-            this.state = state;
+            this.gameObjectProvider = gameObjectProvider;
         }
 
-        public void Register<T>(Func<GameState, T> factory)
+        public void Register<T>(Func<T> factory)
           where T: GameObject
         {
             Register(typeof(T).FullName, factory);
         }
 
-        public void Register(string name, Func<GameState, GameObject> factory)
+        public void Register(string name, Func<GameObject> factory)
         {
             factories.Add(name,factory);
         }
 
         public GameObject Create(string name)
         {
-            return factories[name](state);
+            var go = factories[name]();
+            gameObjectProvider.Add(go);
+            return go;
         }
 
         public T Create<T>()
             where T: GameObject
         {
-            return (T) factories[typeof(T).FullName](state);
+            return (T) Create(typeof(T).FullName);
         }
     }
 

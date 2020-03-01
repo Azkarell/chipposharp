@@ -2,11 +2,11 @@
 using Chippo.Math;
 using SFML.System;
 
-namespace Chippo.Graphics.SFML
+namespace Chippo.Graphics.SFML.Extensions
 {
     public static class TransformationExtensions
     {
-        public static Vector2f ToSfmlScale(this ITransformation transformation)
+        public static Vector2f ToSfmlScale(this Transformation transformation)
         {
             return transformation.Scale.ToSfmlVector();
         }
@@ -16,7 +16,7 @@ namespace Chippo.Graphics.SFML
             return new Vector2f(vector.X,vector.Y);
         }
 
-        public static float ToSflmRotation(this ITransformation transformation)
+        public static float ToSflmRotation(this Transformation transformation)
         {
             return (float) transformation.Rotation.InRadians.Value;
         }

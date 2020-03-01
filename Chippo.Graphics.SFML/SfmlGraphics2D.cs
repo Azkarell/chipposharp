@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Chippo.Core;
 using Chippo.Core.Input;
 using Chippo.Core.Interfaces;
+using Chippo.Graphics.Interface;
 using SFML.Graphics;
 using SFML.System;
 
@@ -13,7 +14,7 @@ namespace Chippo.Graphics.SFML
     {
         private RenderWindow renderWindow;
 
-        public SfmlGraphics2D(RenderWindow renderWindow)
+        public SfmlGraphics2D(IContextFactory<SfmlContext> contextFactory, IDrawableProvider<SfmlContext> drawableProvider, RenderWindow renderWindow) : base(contextFactory, drawableProvider)
         {
             this.renderWindow = renderWindow;
             renderWindow.SetVisible(true);

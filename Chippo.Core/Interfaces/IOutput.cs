@@ -3,12 +3,8 @@ using System.Threading.Tasks;
 
 namespace Chippo.Core.Interfaces
 {
-
-
-    public interface IOutput<in TContext>
+    public interface IOutput<in TContext>: IOutput
     {
-        bool IsOpen { get; }
         Task Update(TContext context);
-        void Close();
     }
 }

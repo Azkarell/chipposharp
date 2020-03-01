@@ -28,13 +28,10 @@ namespace Chippo.Core
                 .AsSelf();
             builder.RegisterType<T>()
                 .As<IOutput<TContext>>()
+                .As<IOutput>()
                 .AsSelf()
                 .SingleInstance();
 
-            builder.RegisterType<Output<TContext>>()
-                .As<Output>()
-                .AsSelf()
-                .SingleInstance();
             return this;
         }
 

@@ -1,4 +1,5 @@
 ﻿using Chippo.Core;
+using Chippo.Graphics;
 
 namespace Chippo.GameObjects.Extensions
 {

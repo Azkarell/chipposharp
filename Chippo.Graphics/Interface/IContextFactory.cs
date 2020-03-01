@@ -1,4 +1,4 @@
-﻿namespace Chippo.Core.Interfaces
+﻿namespace Chippo.Graphics.Interface
 {
     public interface IContextFactory<T>
     {

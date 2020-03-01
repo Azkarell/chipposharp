@@ -6,6 +6,7 @@ namespace Chippo.Movement.Interface
 {
     public interface IMovement
     {
-        Vector2 Apply(in Vector2 oldPosition, in TimeSpan delta);
+        Vector2 GetDelta(in TimeSpan delta);
+        Rotation GetRotation(in TimeSpan delta);
     }
 }

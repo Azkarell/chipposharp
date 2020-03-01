@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Chippo.GameObjects.Interfaces;
 
 namespace Chippo.GameObjects.Extensions
 {
@@ -6,8 +7,9 @@ namespace Chippo.GameObjects.Extensions
     {
         public static ContainerBuilder AddGameLogic(this ContainerBuilder builder)
         {
-            builder.RegisterType<GameState>()
+            builder.RegisterType<GameObjectProvider>()
                 .AsSelf()
+                .As<IGameObjectProvider>()
                 .SingleInstance();
             return builder;
         }

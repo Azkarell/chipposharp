@@ -1,20 +1,22 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Threading.Tasks;
 using Chippo.Core.Input;
 using Chippo.Core.Interfaces;
+using Chippo.GameObjects.Interfaces;
 
 namespace Chippo.GameObjects
 {
     internal class GameLogic: ILogic
     {
         private readonly ILoop loop;
-        private readonly GameState state;
         private readonly IInput input;
+        private readonly IGameObjectProvider gameObjectProvider;
 
-        public GameLogic(ILoop loop, GameState state, IInput input)
+        public GameLogic(ILoop loop,  IInput input, IGameObjectProvider gameObjectProvider)
         {
             this.loop = loop;
-            this.state = state;
             this.input = input;
+            this.gameObjectProvider = gameObjectProvider;
         }
 
 
@@ -25,7 +27,7 @@ namespace Chippo.GameObjects
             {
                 loop.Stop();
             }
-            foreach (var gameObject in state.GameObjects)
+            foreach (var gameObject in gameObjectProvider.GetGameObjects())
             {
                 gameObject.Update(loop.Elapsed);
             }

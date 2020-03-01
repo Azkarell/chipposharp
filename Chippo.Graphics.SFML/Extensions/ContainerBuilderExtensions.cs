@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Chippo.Core.Input;
 using Chippo.Core.Interfaces;
+using Chippo.Graphics.Interface;
 using SFML.Graphics;
 using SFML.Window;
 
@@ -14,6 +15,11 @@ namespace Chippo.Graphics.SFML.Extensions
             builder.RegisterType<SfmlContextFactory>()
                 .As<IContextFactory<SfmlContext>>();
             builder.Register(c => c.Resolve<SfmlGraphics2D>().Input).As<IInput>().SingleInstance();
+            builder.RegisterType<SfmlDrawableProvider>()
+                .AsSelf()
+                .As<IDrawableProvider<SfmlContext>>()
+                .SingleInstance();
+
             return builder;
         }
     }

@@ -19,9 +19,15 @@ namespace Chippo.Movement
             this.unit = unit;
         }
 
-        public Vector2 Apply(in Vector2 oldPosition, in TimeSpan delta)
+        public Vector2 GetDelta(in TimeSpan delta)
         {
-            return oldPosition + new Vector2(GetX(delta), GetY(delta));
+            return new Vector2(GetX(delta), GetY(delta));
+        }
+
+        public Rotation GetRotation(in TimeSpan delta)
+        {
+
+            return Rotation.Zero;
         }
 
         private float GetY(in TimeSpan delta)

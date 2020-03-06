@@ -22,12 +22,10 @@ namespace Chippo.Core
         }
 
 
-        public AppRegistration UseOutput<T, TContext>() where T : IOutput<TContext>
+        public AppRegistration UseOutput<T>() where T : IOutput
         {
-            builder.RegisterType<TContext>()
-                .AsSelf();
+
             builder.RegisterType<T>()
-                .As<IOutput<TContext>>()
                 .As<IOutput>()
                 .AsSelf()
                 .SingleInstance();

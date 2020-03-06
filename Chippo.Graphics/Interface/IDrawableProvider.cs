@@ -2,10 +2,12 @@
 
 namespace Chippo.Graphics.Interface
 {
-    public interface IDrawableProvider<T>
+    public interface IDrawableProvider<T, TContext>
+      where T: IDrawable<TContext>
     {
-        public void Add(IDrawable<T> drawable);
-        public IEnumerable<IDrawable<T>> GetDrawables();
+        public void Add(T drawable);
+        public void Remove(T drawable);
+        public IEnumerable<T> GetDrawables();
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Chippo.Core;
 using Chippo.Core.Interfaces;
 using Chippo.Graphics.Interface;
@@ -6,37 +7,59 @@ using NotImplementedException = System.NotImplementedException;
 
 namespace Chippo.Graphics
 {
-    public abstract class Graphics2D<TContext, TDrawable> : IOutput<TContext>
-        where TContext : Graphics2DContext<TDrawable>
+    public class Graphics2D<TExternalDrawable, TContext, TInternalDrawable> : IOutput
+       where TExternalDrawable : IDrawable<TContext>
+       where TContext: class, IGraphics2DContext<TInternalDrawable, TContext>
     {
-        private TContext context;
+        private TContext? context;
         private readonly IContextFactory<TContext> contextFactory;
-        private readonly IDrawableProvider<TContext> drawableProvider;
+        private readonly IRenderTarget<TContext> renderTarget;
+        private readonly IDrawableProvider<TExternalDrawable, TContext> drawableProvider;
 
-        public Graphics2D(IContextFactory<TContext> contextFactory,  IDrawableProvider<TContext> drawableProvider)
-        {
+        public Graphics2D(
+            IContextFactory<TContext> contextFactory,
+            IRenderTarget<TContext> renderTarget,
+            IDrawableProvider<TExternalDrawable, TContext> drawableProvider)
+        { 
             this.contextFactory = contextFactory;
+            this.renderTarget = renderTarget;
             this.drawableProvider = drawableProvider;
         }
 
-     
 
-        public abstract bool IsOpen { get; }
-        public Task Update()
+        public bool IsOpen => renderTarget.IsOpen;
+
+        public Task Update(IEnumerable<TExternalDrawable> drawables)
         {
-            context = contextFactory.Create(context);
-            foreach (var drawable in drawableProvider.GetDrawables())
+            if (IsOpen)
             {
-                drawable.Draw(context);
+                context = contextFactory.Create(context);
+                foreach (var drawable in drawables)
+                {
+                    drawable.Draw(context);
+                }
+                renderTarget.Draw(context);
             }
-            return Update(context);
+            return Task.CompletedTask;
         }
 
-        public abstract Task Update(TContext context);
 
 
-        public abstract void Close();
+        public void Close()
+        {
+            renderTarget.Close();
+        }
+
+        public async Task Update()
+        {
+            await Update(drawableProvider.GetDrawables());
+        }
     }
 
-
+    public interface IRenderTarget<in TContext>
+    {
+        void Draw(TContext context);
+        void Close();
+        bool IsOpen { get; }
+    }
 }

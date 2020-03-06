@@ -6,5 +6,6 @@ namespace Chippo.Core.Interfaces
     {
         void Configure(ContainerBuilder builder);
         void ConfigureApp(AppRegistration appRegistration);
+
     }
 }

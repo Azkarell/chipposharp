@@ -1,20 +1,26 @@
 ﻿using System.Collections.Generic;
 using Chippo.Graphics.Interface;
+using SFML.Graphics;
 using NotImplementedException = System.NotImplementedException;
 
 namespace Chippo.Graphics.SFML
 {
-    public class SfmlDrawableProvider: IDrawableProvider<SfmlContext>
+    public class SfmlDrawableProvider<TDrawable>: IDrawableProvider<TDrawable, SfmlContext>
+       where TDrawable: IDrawable<SfmlContext>
     {
-        private List<IDrawable<SfmlContext>> drawables = new List<IDrawable<SfmlContext>>();
+        private List<TDrawable> drawables = new List<TDrawable>();
         
-        public void Add(IDrawable<SfmlContext> drawable)
+        public void Add(TDrawable drawable)
         {
-            drawable.OnDestroy += args => drawables.Remove(args.Drawable);
             drawables.Add(drawable);
         }
 
-        public IEnumerable<IDrawable<SfmlContext>> GetDrawables()
+        public void Remove(TDrawable drawable)
+        {
+            drawables.Remove(drawable);
+        }
+
+        public IEnumerable<TDrawable> GetDrawables()
         {
             return drawables;
         }

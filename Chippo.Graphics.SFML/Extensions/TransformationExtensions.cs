@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Chippo.Math;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Chippo.Graphics.SFML.Extensions
@@ -18,7 +19,16 @@ namespace Chippo.Graphics.SFML.Extensions
 
         public static float ToSflmRotation(this Transformation transformation)
         {
-            return (float) transformation.Rotation.InRadians.Value;
+            return (float) transformation.RotationAngle.InRadians.Value;
+        }
+
+        public static Transform ToSfmlTransform(this Transformation transformation)
+        {
+            var transform = Transform.Identity;
+            transform.Scale(transformation.Scale.ToSfmlVector());
+            transform.Rotate(transformation.ToSflmRotation());
+            transform.Translate(transformation.Translation.ToSfmlVector());
+            return transform;
         }
     }
 }

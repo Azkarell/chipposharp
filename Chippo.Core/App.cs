@@ -12,7 +12,7 @@ namespace Chippo.Core
         private readonly ILoop loop;
 
 
-        public App(IOutput output,IDispatcher dispatcher, ILogic logic, ILoop loop)
+        public App(IOutput output, IDispatcher dispatcher, ILogic logic, ILoop loop)
         {
             this.output = output;
             this.dispatcher = dispatcher;
@@ -27,6 +27,7 @@ namespace Chippo.Core
             State = ApplicationState.Running;
             Nito.AsyncEx.AsyncContext.Run(async () =>
             {
+                await logic.Initialize();
                 loop.Start();
                 while (State == ApplicationState.Running && output.IsOpen)
                 {
@@ -35,6 +36,7 @@ namespace Chippo.Core
                     await output.Update();
                     State = await loop.Next();
                 }
+                await logic.Shutdown();
                 output.Close();
             });
             return Task.CompletedTask;

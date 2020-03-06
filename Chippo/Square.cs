@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Chippo.GameObjects;
 using Chippo.Graphics;
 using Chippo.Graphics.Interface;
@@ -30,7 +31,17 @@ namespace Chippo
 
         public override void Draw(SfmlContext context)
         {
-            context.Square(color, transformation);
+            if (transformation.Translation.X > context.Dimension.X)
+            {
+                transformation = transformation.WithTranslation(new Vector2(context.Dimension.X,transformation.Translation.Y));
+            }
+
+            if (transformation.Translation.Y > context.Dimension.Y)
+            {
+                transformation =
+                    transformation.WithTranslation(new Vector2(transformation.Translation.X, context.Dimension.Y));
+            }
+            context.Square(transformation, new Material(color));
         }
     }
 }

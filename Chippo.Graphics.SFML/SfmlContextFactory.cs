@@ -1,5 +1,6 @@
 ﻿using Chippo.Core.Interfaces;
 using Chippo.Graphics.Interface;
+using Chippo.Graphics.SFML.Strategies;
 using SFML.Graphics;
 
 namespace Chippo.Graphics.SFML
@@ -12,9 +13,9 @@ namespace Chippo.Graphics.SFML
         {
             this.renderWindow = renderWindow;
         }
-        public SfmlContext Create(SfmlContext oldContext)
+        public SfmlContext Create(SfmlContext? oldContext)
         {
-            return new SfmlContext(renderWindow);
+            return new SfmlContext(renderWindow, oldContext?.Strategy ?? new BaseRenderStrategy());
         }
     }
 }

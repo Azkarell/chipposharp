@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace Chippo.Core.Input
 {
@@ -39,6 +40,11 @@ namespace Chippo.Core.Input
         public static bool operator !=(MousePosition left, MousePosition right)
         {
             return !left.Equals(right);
+        }
+
+        public Vector2 AsVector()
+        {
+            return new Vector2(X,Y);
         }
 
     }

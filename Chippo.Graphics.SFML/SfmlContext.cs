@@ -1,54 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
+using Chippo.Core.Resources;
 using Chippo.Graphics.SFML.Extensions;
+using Chippo.Graphics.SFML.Interface;
 using Chippo.Math;
 using SFML.Graphics;
-using SFML.System;
 
 namespace Chippo.Graphics.SFML
 {
-    public class SfmlContext : Graphics2DContext<Drawable>
+    public class SfmlContext : IGraphics2DContext<Drawable,SfmlContext>
     {
+        internal ISfmlRenderStrategy Strategy { get; }
         private readonly RenderWindow renderWindow;
 
         private List<Drawable> drawables = new List<Drawable>();
 
-        public SfmlContext(RenderWindow renderWindow)
+        public SfmlContext(RenderWindow renderWindow, ISfmlRenderStrategy strategy)
         {
+            Strategy = strategy;
             this.renderWindow = renderWindow;
         }
 
-        public override Graphics2DContext<Drawable> Square(Color color, Transformation transformation)
+
+        public SfmlContext Square(Transformation transformation, Material material)
         {
-            var shape = new RectangleShape(new Vector2f(1,1));
-            UpdateShape(shape, transformation);
-            shape.FillColor = color.ToSfmlColor();
-            drawables.Add(shape);
+            drawables.Add(Strategy.CreateSquare(transformation,material));
             return this;
         }
 
-        public override Graphics2DContext<Drawable> Circle(Color color, Transformation transformation)
+        public SfmlContext Text(Transformation transformation, Material material, string text)
         {
-            var shape = new CircleShape(1);
-            UpdateShape(shape,transformation);
-            shape.FillColor = color.ToSfmlColor();
-            drawables.Add(shape);
+            var resourceLoader = new ResourceLoader();
+            var font = new Font(resourceLoader.Load("ErbosDraco"));
+            var drawableText = new Text(text,font);
+            drawableText.FillColor = material.FillColor.ToSfmlColor();
+            drawableText.Transform.Combine(transformation.ToSfmlTransform());
+            drawables.Add(new Text(text, font));
             return this;
         }
 
-        public override IEnumerable<Drawable> GetDrawables()
+        public IEnumerable<Drawable> GetDrawables()
         {
             return drawables;
         }
 
-        public override Vector2 Dimension => new Vector2(renderWindow.Size.X,renderWindow.Size.Y);
+        public Vector2 Dimension => new Vector2(renderWindow.Size.X,renderWindow.Size.Y);
 
-        private void UpdateShape(Shape shape, Transformation transformation)
-        {
-            shape.Transform.Scale(transformation.ToSfmlScale());
-            shape.Position = transformation.Translation.ToSfmlVector();
-            shape.Rotation = transformation.ToSflmRotation();
-        }
+
 
     }
 }

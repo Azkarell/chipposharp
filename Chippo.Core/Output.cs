@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Threading.Tasks;
 
 namespace Chippo.Core
 {
     public interface IOutput
     {
         bool IsOpen { get; }
-        Task Update();
         void Close();
+        Task Update();
     }
 }

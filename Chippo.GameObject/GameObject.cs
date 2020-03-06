@@ -1,45 +1,53 @@
 ﻿using System;
-using Chippo.Graphics.Interface;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Reflection;
+using Chippo.GameObjects.Interfaces;
+using Chippo.Math;
 
 namespace Chippo.GameObjects
 {
     public abstract class GameObject
     {
-        public delegate void GameObjectDestroyEvent(GameObjectDestroyEventArgs args);
         private TimeSpan last = TimeSpan.Zero;
 
-        public void Update(TimeSpan totalElapsed)
+        private List<Action> onRemove = new List<Action>();
+        public GameObjectLifeTime Update(TimeSpan totalElapsed)
         {
-            if (OnUpdate(totalElapsed - last) == GameObjectLifeTime.Destroyed)
-            {
-                OnDestroy?.Invoke(new GameObjectDestroyEventArgs(this));
-            }
+            State = OnUpdate(totalElapsed - last);
             last = totalElapsed;
+            return State;
+
         }
         protected abstract GameObjectLifeTime OnUpdate(TimeSpan delta);
-        public event GameObjectDestroyEvent? OnDestroy;
-    }
 
-    public class GameObjectDestroyEventArgs
-    {
-        public GameObject GameObject { get; }
-        public GameObjectDestroyEventArgs(GameObject gameObject)
+
+        public GameObjectLifeTime State { get; private set; }
+
+        internal IBlueprintFactory Factory { get; set; }
+
+        public T ConstructByBlueprint<T>(string bluePrintName) where T: GameObject
         {
-            GameObject = gameObject;
+            var ngo = Factory.Construct<T>(bluePrintName);
+            ngo.Factory = Factory;
+            return Factory.Construct<T>(bluePrintName);
+        }
+
+        public void OnRemove(Action action)
+        {
+            onRemove.Add(action);
+        }
+
+        public void Remove()
+        {
+            foreach (var action in onRemove)
+            {
+                action();
+            }
         }
     }
 
-    public enum GameObjectLifeTime
-    {
-        Hidden,
-        Alive,
-        Destroyed
-    }
 
-    public abstract class DrawableGameObject<T> : GameObject, IDrawable<T>
-    {
-        public abstract void Draw(T context);
-
-        public event IDrawable<T>.DrawableDestroyEvent? OnDestroy;
-    }
+    
 }

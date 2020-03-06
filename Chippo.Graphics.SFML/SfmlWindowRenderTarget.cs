@@ -10,11 +10,11 @@ using SFML.System;
 
 namespace Chippo.Graphics.SFML
 {
-    public class SfmlGraphics2D : Graphics2D<SfmlContext, Drawable>, IDisposable
+    public class SfmlWindowRenderTarget : IRenderTarget<SfmlContext>, IDisposable
     {
         private RenderWindow renderWindow;
 
-        public SfmlGraphics2D(IContextFactory<SfmlContext> contextFactory, IDrawableProvider<SfmlContext> drawableProvider, RenderWindow renderWindow) : base(contextFactory, drawableProvider)
+        public SfmlWindowRenderTarget(RenderWindow renderWindow) 
         {
             this.renderWindow = renderWindow;
             renderWindow.SetVisible(true);
@@ -24,12 +24,12 @@ namespace Chippo.Graphics.SFML
 
         public IInput Input { get; }
 
-        public override bool IsOpen => renderWindow.IsOpen;
+        public bool IsOpen => renderWindow.IsOpen;
         
         public Vector2f Dimension => (Vector2f) renderWindow.Size;
 
 
-        public override Task Update(SfmlContext context)
+        public void Draw(SfmlContext context)
         {
             renderWindow.Clear(global::SFML.Graphics.Color.Black);
             foreach (var drawable in context.GetDrawables())
@@ -37,10 +37,9 @@ namespace Chippo.Graphics.SFML
                 renderWindow.Draw(drawable);
             }
             renderWindow.Display();
-            return Task.CompletedTask;
         }
 
-        public override void Close()
+        public void Close()
         {
             renderWindow.Close();
             Dispose();
@@ -53,10 +52,7 @@ namespace Chippo.Graphics.SFML
             renderWindow.Dispose();
         }
 
-        public static Dimension FromWindow(RenderWindow renderWindow)
-        {
-            return new Dimension(renderWindow.Size.X, renderWindow.Size.Y);
-        }
+ 
     }
 
 }

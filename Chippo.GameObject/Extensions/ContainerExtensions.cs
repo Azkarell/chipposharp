@@ -1,16 +1,16 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Chippo.GameObjects.Interfaces;
 
 namespace Chippo.GameObjects.Extensions
 {
     public static class ContainerExtensions
     {
-        public static ContainerBuilder AddGameLogic(this ContainerBuilder builder)
+        public static ContainerBuilder AddInitialization<T>(this ContainerBuilder builder)
         {
-            builder.RegisterType<GameObjectProvider>()
-                .AsSelf()
-                .As<IGameObjectProvider>()
-                .SingleInstance();
+            builder.RegisterType<T>()
+                .As<IInitialization>()
+                .AsSelf();
             return builder;
         }
     }

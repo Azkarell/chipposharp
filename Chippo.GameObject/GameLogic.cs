@@ -3,35 +3,47 @@ using System.Threading.Tasks;
 using Chippo.Core.Input;
 using Chippo.Core.Interfaces;
 using Chippo.GameObjects.Interfaces;
+using NotImplementedException = System.NotImplementedException;
 
 namespace Chippo.GameObjects
 {
-    internal class GameLogic: ILogic
+    public class GameLogic: ILogic
     {
-        private readonly ILoop loop;
-        private readonly IInput input;
-        private readonly IGameObjectProvider gameObjectProvider;
+        private readonly IInitialization initialization;
+        private readonly IClock clock;
+        public ILevel CurrentLevel { get; private set; }
 
-        public GameLogic(ILoop loop,  IInput input, IGameObjectProvider gameObjectProvider)
+        public GameLogic(IInitialization initialization, IClock clock)
         {
-            this.loop = loop;
-            this.input = input;
-            this.gameObjectProvider = gameObjectProvider;
+            this.initialization = initialization;
+            this.clock = clock;
         }
 
 
-
-        public Task Update()
+        public async Task Initialize()
         {
-            if (input.IsPressed(KeyboardKey.Q))
+            CurrentLevel = await initialization.InitializeAsync();
+        }
+        public async Task Update()
+        {
+            if (CurrentLevel == null)
             {
-                loop.Stop();
+                clock.Stop();
             }
-            foreach (var gameObject in gameObjectProvider.GetGameObjects())
+            if (clock.IsRunning)
             {
-                gameObject.Update(loop.Elapsed);
+                CurrentLevel = await CurrentLevel.UpdateAsync(clock.Elapsed);
             }
+        }
+
+        public Task Shutdown()
+        {
             return Task.CompletedTask;
         }
+
+
+
     }
+
+
 }

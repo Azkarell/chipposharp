@@ -24,10 +24,10 @@ namespace Chippo.Movement
             return new Vector2(GetX(delta), GetY(delta));
         }
 
-        public Rotation GetRotation(in TimeSpan delta)
+        public RotationAngle GetRotation(in TimeSpan delta)
         {
 
-            return Rotation.Zero;
+            return RotationAngle.Zero;
         }
 
         private float GetY(in TimeSpan delta)
